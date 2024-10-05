@@ -14,12 +14,19 @@
 	export let value: DateValue | undefined = undefined;
 	export let dateString = ''; // The variable you want to bind
 
-	// Format date function
+	let dayOfWeek = '';
+
 	const formatDate = (date: DateValue) => {
 		return df.format(date.toDate(getLocalTimeZone()));
 	};
 
+	const dayOfWeekFormatter = new DateFormatter('de-DE', { weekday: 'short' });
+	const getDayOfWeek = (date: DateValue) => {
+		return dayOfWeekFormatter.format(date.toDate(getLocalTimeZone()));
+	};
+
 	$: dateString = value ? formatDate(value) : formatDate(today(getLocalTimeZone()));
+	$: dayOfWeek = value ? getDayOfWeek(value) : getDayOfWeek(today(getLocalTimeZone()));
 
 	const items = [
 		{ value: -7, label: '󰇙󰇙' },
@@ -73,13 +80,13 @@
 				class={cn('w-full justify-start text-left font-normal')}
 				builders={[builder]}
 			>
-				{dateString}
+				{dayOfWeek + ' : ' + dateString}
 			</Button>
 		</Popover.Trigger>
 		<Popover.Content
 			class="flex aspect-square flex-col overflow-clip rounded-xl border-[1px] border-dotted p-0"
 		>
-			<div class="w-full rounded-md border-0 bg-black">
+			<div class="w-full rounded-md border-0">
 				<Calendar class="w-full border-0" bind:value />
 				<div class="flex w-full flex-row">
 					{#each items as item}
@@ -92,5 +99,5 @@
 		</Popover.Content>
 	</Popover.Root>
 
-	<Button variant="ghost" on:click={incrementDate} class=""></Button>
+	<Button variant="ghost" on:click={incrementDate}></Button>
 </div>

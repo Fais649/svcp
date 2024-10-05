@@ -9,9 +9,6 @@
 	import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 	import { onMount, onDestroy, tick } from 'svelte';
 
-	let bg = '#000';
-	let fg = '#fff';
-
 	let os = '';
 
 	let keyboardHeight = 0;
@@ -156,7 +153,7 @@
 
 	function handleFocusIn(event: FocusEvent, y: number, scale: number) {
 		let el = event.currentTarget as HTMLElement;
-		animateFocusIn(el, y, scale, 20);
+		animateFocusIn(el, y, scale, 100);
 	}
 
 	function handleFocusOut(event: FocusEvent) {
@@ -203,7 +200,7 @@
 					let textbox = document.querySelector('.textarea-wrapper');
 					tick();
 					if (textbox instanceof HTMLElement) {
-						animateFocusIn(textbox, -boxHeight * 1.05, 1.05, 10);
+						animateFocusIn(textbox, -boxHeight * 1.05, 1.05, 5);
 					}
 				}}
 				on:blur={(e) => {
@@ -215,7 +212,7 @@
 						animateFocusOut(textbox, 0, 1, 1);
 					}
 				}}
-				style="background: {bg}; color: {fg}; transition: transform 0.4s ease; transform-origin: top; transform: translateY(0) scale(1);"
+				style="transition: transform 0.4s ease; transform-origin: top; transform: translateY(0) scale(1);"
 			>
 				<TodoList
 					{fontSize}
@@ -243,14 +240,14 @@
 					isFocused = false;
 					handleFocusOut(e);
 				}}
-				style="background: {bg}; color: {fg}; transition: transform 0.4s ease; transform-origin: top; transform: translateY(0) scale(1);"
+				style="transition: transform 0.4s ease; transform-origin: top; transform: translateY(0) scale(1);"
 			>
 				<TextAreaWLabel
 					{fontSize}
 					{headerHeight}
 					{headerFontSize}
 					{isFocused}
-					height={boxHeightStr}
+					boxHeight={boxHeightStr}
 					label="note;"
 					bind:noteString
 				/>
@@ -259,9 +256,7 @@
 	</div>
 
 	<Footer style={footerStyle} class={footerClass}>
-		<div style="color: {fg}; background: {bg};">
-			<DatePicker bind:dateString />
-		</div>
+		<DatePicker bind:dateString />
 	</Footer>
 </div>
 

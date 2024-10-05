@@ -102,9 +102,11 @@
 </script>
 
 <div
-	style="height:{boxHeight};
-	border-right: {isFocused ? '1px solid' : '1px dotted'};
-	border-top: {isFocused ? '1px solid' : '1px dotted'};"
+	style="height:{boxHeight}; border-right: {isFocused
+		? '1px solid'
+		: '1px dotted'}; border-top: {isFocused
+		? '1px solid'
+		: '1px dotted'}; border-left: 1px solid; border-bottom: 1px solid;"
 	class="{isFocused
 		? ''
 		: 'txt-shadow '} gap-1.5 rounded-2xl border-[1px] p-3 shadow-none transition-all"
@@ -121,7 +123,7 @@
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
-		class="h-[90%] resize-none overflow-y-scroll border-none pb-8 pt-2"
+		class="box h-[90%] resize-none overflow-y-scroll border-none pb-8 pt-2"
 		on:click={(event) => {
 			if (event.currentTarget === event.target) addTodoItem();
 		}}
@@ -135,7 +137,7 @@
 			>
 				<div
 					style="font-size: 15px;"
-					class="w-1/6 items-center justify-self-center bg-transparent text-center align-middle"
+					class="w-1/6 items-center justify-self-center text-center align-middle"
 					on:pointerdown={(e) => {
 						e.preventDefault();
 						toggleCompleteTodoItem(index);
@@ -150,7 +152,7 @@
 				{#if todo.editing}
 					<Input
 						style="font-size: {fontSize}px;"
-						class="todo-input ml-2 h-[50%] w-5/6 rounded-xl border-[1px] border-dotted bg-transparent ring-0"
+						class="todo-input ml-2 h-[50%] w-5/6 rounded-xl border-[1px] border-dotted ring-0"
 						bind:value={todo.text}
 						on:blur={() => finishEditingTodoItem(index)}
 					/>

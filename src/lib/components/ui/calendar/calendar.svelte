@@ -32,7 +32,7 @@
 	<Calendar.Months>
 		{#each months as month}
 			<Calendar.Grid>
-				<Calendar.GridBody class="w-fit">
+				<Calendar.GridBody class="w-fit items-center justify-center">
 					{#each month.weeks as weekDates}
 						<Calendar.GridRow class="mt-2 justify-center">
 							{#each weekDates as date}
@@ -45,7 +45,7 @@
 				</Calendar.GridBody>
 
 				<Calendar.GridHead>
-					<Calendar.GridRow class="flex w-full">
+					<Calendar.GridRow class="flex w-full items-center justify-center">
 						{#each weekdays as weekday}
 							<Calendar.HeadCell>
 								{weekday.slice(0, 2)}
