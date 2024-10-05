@@ -8,8 +8,40 @@
 	import { Device } from '@capacitor/device';
 	import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 	import { onMount, onDestroy, tick } from 'svelte';
+	import { themes, updateCSSVariables } from './themes';
+
+	interface Preferences {
+		theme: string;
+	}
+
+	let preferences: Preferences = {
+		theme: 'light'
+	};
+
+	function cycleTheme() {
+		let index = themes.indexOf(preferences.theme);
+		if (index === themes.length) {
+			index = 0;
+			preferences.theme = themes[index];
+		} else {
+			preferences.theme = themes[index + 1];
+		}
+
+		console.log(preferences.theme);
+		savePreferences();
+	}
+
+	$: updateCSSVariables(preferences.theme);
 
 	let os = '';
+	let isFocused: boolean = false;
+	let contentDiv: HTMLElement;
+	let todoList: TodoList;
+	let todoListParentDiv: HTMLElement;
+
+	const journalDir: string = 'journal/';
+	let dateString: string = '';
+	let noteString: string = '';
 
 	let keyboardHeight = 0;
 	let viewportHeightPx: number = -1;
@@ -47,7 +79,7 @@
 			: '';
 
 	$: footerClass =
-		"fixed bottom-0 z-30 flex h-8 w-full items-center justify-center ${os !== 'ios' ? (bigPhone ? `bottom-2 mb-8` : 'bottom-2 mb-4') : `pb-0`}";
+		"fixed  bottom-0 z-[120] flex h-10 w-full items-center justify-center ${os !== 'ios' ? (bigPhone ? `bottom-2 mb-8` : 'bottom-2 mb-4') : `pb-0`}";
 
 	$: if (viewportHeightPx > 650) {
 		boxHeight = defaultBoxHeightLg;
@@ -71,15 +103,6 @@
 		smolPhone = true;
 	}
 
-	let isFocused: boolean = false;
-	let contentDiv: HTMLElement;
-	let todoList: TodoList;
-	let todoListParentDiv: HTMLElement;
-
-	const journalDir: string = 'journal';
-	let dateString: string = '';
-	let noteString: string = '';
-
 	onMount(async () => {
 		try {
 			const info = await Device.getInfo();
@@ -99,6 +122,8 @@
 		});
 
 		tick();
+		loadPreferences();
+		tick();
 		loadContent();
 	});
 
@@ -108,7 +133,7 @@
 
 	const writeFile = async (dir: string, name: string, content: string) => {
 		await Filesystem.writeFile({
-			path: journalDir + '/' + dir + '/' + name,
+			path: dir + '/' + name,
 			data: content,
 			recursive: true,
 			directory: Directory.Documents,
@@ -117,14 +142,19 @@
 	};
 
 	const readFile = async (dir: string, name: string) => {
-		const contents = await Filesystem.readFile({
-			path: journalDir + '/' + dir + '/' + name,
-			directory: Directory.Documents,
-			encoding: Encoding.UTF8
-		});
+		try {
+			const contents = await Filesystem.readFile({
+				path: dir + '/' + name,
+				directory: Directory.Documents,
+				encoding: Encoding.UTF8
+			});
+			return contents.data as string;
+		} catch (error) {
+			console.error('WTF: ', error);
+		}
 
 		tick();
-		return contents;
+		return '';
 	};
 
 	const saveContent = async () => {
@@ -132,16 +162,40 @@
 			note: noteString,
 			todo: todoList.getTodosAsString()
 		});
-		await writeFile(dateString, 'note.txt', noteString);
-		await writeFile(dateString, 'todo.txt', todoList.getTodosAsString());
-		await writeFile(dateString, 'content.json', contentString);
+		await writeFile(journalDir + dateString, 'note.txt', noteString);
+		await writeFile(journalDir + dateString, 'todo.txt', todoList.getTodosAsS255ring());
+		await writeFile(journalDir + dateString, 'content.json', contentString);
+		tick();
+	};
+
+	const savePreferences = async () => {
+		try {
+			await writeFile('', 'preferences.json', JSON.stringify(preferences));
+			console.log(await readFile('', 'preferences.json'));
+		} catch (error) {
+			console.log(error);
+		}
+		tick();
+	};
+
+	const loadPreferences = async () => {
+		try {
+			let preferencesString = await readFile('', 'preferences.json');
+			let preferencesJson = JSON.parse(preferencesString);
+			if (preferencesJson.theme) {
+				updateCSSVariables(preferencesJson.theme);
+			}
+			preferences = preferencesJson as Preferences;
+		} catch (error) {
+			savePreferences();
+		}
 		tick();
 	};
 
 	const loadContent = async () => {
 		try {
-			let contentString = await readFile(dateString, 'content.json');
-			let contentJson = JSON.parse(contentString.data.toString());
+			let contentString = await readFile(journalDir + dateString, 'content.json');
+			let contentJson = JSON.parse(contentString);
 			noteString = contentJson.note;
 			todoList.loadTodos(contentJson.todo.toString());
 		} catch (error) {
@@ -185,12 +239,12 @@
 
 <div class="container fixed w-full">
 	<div tabindex="-1" style="width: {boxWidthStr};" bind:this={contentDiv}>
-		<div id="logo" class="text-5xl">⠋</div>
+		<div id="logo" on:pointerdown={cycleTheme} class="text-5xl">⠋</div>
 		<div style="min-height: {boxHeightStr}; margin-left: 0;">
 			<div
 				bind:this={todoListParentDiv}
 				tabindex="-1"
-				class="todo-wrapper"
+				class="box todo-wrapper"
 				on:pointerup={saveContent}
 				on:touchend={saveContent}
 				on:touchcancel={saveContent}
@@ -231,7 +285,7 @@
 
 		<div style={boxStyle}>
 			<div
-				class="textarea-wrapper"
+				class="box textarea-wrapper"
 				on:focusin={(e) => {
 					isFocused = true;
 					handleFocusIn(e, -boxHeight * 1.1, 1.2);
@@ -256,7 +310,9 @@
 	</div>
 
 	<Footer style={footerStyle} class={footerClass}>
-		<DatePicker bind:dateString />
+		<div>
+			<DatePicker cssClass={'ui'} bind:dateString />
+		</div>
 	</Footer>
 </div>
 
@@ -269,5 +325,20 @@
 		justify-content: flex-start;
 		align-items: center;
 		text-align: center;
+	}
+
+	:global(.ui) {
+		background: var(--background);
+		color: var(--foreground);
+	}
+
+	:root {
+		background: var(--background);
+		color: var(--foreground);
+	}
+
+	* {
+		background: var(--background);
+		color: var(--foreground);
 	}
 </style>

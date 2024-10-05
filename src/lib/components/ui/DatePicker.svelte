@@ -5,7 +5,6 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
-	import * as Select from '$lib/components/ui/select/index.js';
 
 	const df = new DateFormatter('de-DE', {
 		dateStyle: 'medium'
@@ -13,6 +12,7 @@
 
 	export let value: DateValue | undefined = undefined;
 	export let dateString = ''; // The variable you want to bind
+	export let cssClass = '';
 
 	let dayOfWeek = '';
 
@@ -66,7 +66,7 @@
 </script>
 
 <div
-	class="mb-4 flex w-fit flex-row items-center justify-center overflow-hidden rounded-2xl border-[1px] border-dotted"
+	class=" txt-shadow {cssClass} mb-4 flex w-fit flex-row items-center justify-center overflow-hidden rounded-2xl border-[1px] border-dotted"
 >
 	<Button
 		variant="ghost"
@@ -101,3 +101,9 @@
 
 	<Button variant="ghost" on:click={incrementDate}></Button>
 </div>
+
+<style>
+	.txt-shadow {
+		box-shadow: -1px 1px;
+	}
+</style>

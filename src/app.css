@@ -12,7 +12,6 @@
 	:root {
 		font-family: 'GohuFont';
 		--radius: 0.5rem;
-		@apply dark;
 	}
 
 	.light {

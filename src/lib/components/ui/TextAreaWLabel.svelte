@@ -45,5 +45,6 @@
 <style>
 	.txt-shadow {
 		box-shadow: -2px 2px;
+		/*box-shadow: -2px 2px 4px -1px;*/
 	}
 </style>

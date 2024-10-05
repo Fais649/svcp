@@ -108,7 +108,7 @@
 		? '1px solid'
 		: '1px dotted'}; border-left: 1px solid; border-bottom: 1px solid;"
 	class="{isFocused
-		? ''
+		? 'shadow-focused'
 		: 'txt-shadow '} gap-1.5 rounded-2xl border-[1px] p-3 shadow-none transition-all"
 >
 	<div
@@ -178,5 +178,10 @@
 <style>
 	.txt-shadow {
 		box-shadow: -2px 2px;
+		/*box-shadow: -2px 2px 4px -1px;*/
+	}
+	.shadow-focused {
+		/*box-shadow: -2px 2px;*/
+		/*box-shadow: 0px 4px 12px -4px;*/
 	}
 </style>
