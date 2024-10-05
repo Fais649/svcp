@@ -13,6 +13,7 @@
 	export let value: DateValue | undefined = undefined;
 	export let dateString = ''; // The variable you want to bind
 	export let cssClass = '';
+	export let isFocused;
 
 	let dayOfWeek = '';
 
@@ -66,7 +67,9 @@
 </script>
 
 <div
-	class=" txt-shadow {cssClass} mb-4 flex w-fit flex-row items-center justify-center overflow-hidden rounded-2xl border-[1px] border-dotted"
+	class=" {isFocused
+		? ''
+		: 'txt-shadow '} {cssClass} mb-4 flex w-fit flex-row items-center justify-center overflow-hidden rounded-2xl border-[1px] border-dotted"
 >
 	<Button
 		variant="ghost"

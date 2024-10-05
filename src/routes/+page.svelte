@@ -311,7 +311,7 @@
 
 	<Footer style={footerStyle} class={footerClass}>
 		<div>
-			<DatePicker cssClass={'ui'} bind:dateString />
+			<DatePicker {isFocused} cssClass={'ui'} bind:dateString />
 		</div>
 	</Footer>
 </div>
