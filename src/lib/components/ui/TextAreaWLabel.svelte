@@ -1,33 +1,45 @@
 <script lang="ts">
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import TextStyleBar from './TextStyleBar.svelte';
 	import { Label } from '$lib/components/ui/label/index.js';
 
-	export let bg;
 	export let height;
+	export let fontSize: number = 12;
+	export let headerHeight: string = '20px';
+	export let headerFontSize: string = '12px';
 	export let label;
+	export let isFocused;
+
+	export let noteString: string = '';
 </script>
 
 <div
-	class="h-[{height}] bg-black bg-{bg} txt-shadow flex h-[50%] flex-col gap-1.5 rounded-xl border-2 border-white p-3"
+	style="height:{height};
+	border-right: {isFocused ? '1px solid' : '1px dotted'};
+	border-top: {isFocused ? '1px solid' : '1px dotted'};"
+	class="{isFocused
+		? ''
+		: 'txt-shadow '} gap-1.5 rounded-2xl border-[1px] p-3 shadow-none transition-all"
 >
-	<div class="grid h-[20px] w-full grid-cols-2 grid-rows-1 p-0 align-middle">
-		<Label style="font-size: 20px;" class=" text-left font-bold" for="message">{label}</Label>
-		<div class="justify-self-end align-middle">
-			<TextStyleBar></TextStyleBar>
-		</div>
+	<div
+		style="height: {headerHeight};"
+		class="grid w-full grid-cols-2 grid-rows-1 border-b-[1px] border-dotted p-0 align-middle"
+	>
+		<Label style="font-size: {headerFontSize};" class="h-[50%] text-left font-bold" for="message"
+			>{label}</Label
+		>
+		<div class="justify-self-end align-middle"></div>
 	</div>
-	<Separator class="m-0 h-[2px] border-white bg-white p-0 align-top"></Separator>
 	<Textarea
-		class="h-full resize-none border-none"
-		placeholder="Type your message here."
+		style="font-size: {fontSize}px;"
+		class="h-[87%] resize-none border-none pt-4 shadow-none outline-none ring-0 focus-visible:ring-0"
+		placeholder=">..."
 		id="message"
+		bind:value={noteString}
 	/>
 </div>
 
 <style>
 	.txt-shadow {
-		box-shadow: -3px 3px white;
+		box-shadow: -2px 2px;
 	}
 </style>

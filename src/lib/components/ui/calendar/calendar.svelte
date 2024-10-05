@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { Calendar as CalendarPrimitive } from "bits-ui";
-	import * as Calendar from "./index.js";
-	import { cn } from "$lib/utils.js";
+	import { Calendar as CalendarPrimitive } from 'bits-ui';
+	import * as Calendar from './index.js';
+	import { cn } from '$lib/utils.js';
 
 	type $$Props = CalendarPrimitive.Props;
 	type $$Events = CalendarPrimitive.Events;
 
-	export let value: $$Props["value"] = undefined;
-	export let placeholder: $$Props["placeholder"] = undefined;
-	export let weekdayFormat: $$Props["weekdayFormat"] = "short";
+	export let value: $$Props['value'] = undefined;
+	export let placeholder: $$Props['placeholder'] = undefined;
+	export let weekdayFormat: $$Props['weekdayFormat'] = 'short';
 
-	let className: $$Props["class"] = undefined;
+	let className: $$Props['class'] = undefined;
 	export { className as class };
 </script>
 
@@ -18,7 +18,7 @@
 	bind:value
 	bind:placeholder
 	{weekdayFormat}
-	class={cn("p-3", className)}
+	class={cn('p-3', className)}
 	{...$$restProps}
 	on:keydown
 	let:months
@@ -32,18 +32,9 @@
 	<Calendar.Months>
 		{#each months as month}
 			<Calendar.Grid>
-				<Calendar.GridHead>
-					<Calendar.GridRow class="flex">
-						{#each weekdays as weekday}
-							<Calendar.HeadCell>
-								{weekday.slice(0, 2)}
-							</Calendar.HeadCell>
-						{/each}
-					</Calendar.GridRow>
-				</Calendar.GridHead>
-				<Calendar.GridBody>
+				<Calendar.GridBody class="w-fit">
 					{#each month.weeks as weekDates}
-						<Calendar.GridRow class="mt-2 w-full">
+						<Calendar.GridRow class="mt-2 justify-center">
 							{#each weekDates as date}
 								<Calendar.Cell {date}>
 									<Calendar.Day {date} month={month.value} />
@@ -52,7 +43,23 @@
 						</Calendar.GridRow>
 					{/each}
 				</Calendar.GridBody>
+
+				<Calendar.GridHead>
+					<Calendar.GridRow class="flex w-full">
+						{#each weekdays as weekday}
+							<Calendar.HeadCell>
+								{weekday.slice(0, 2)}
+							</Calendar.HeadCell>
+						{/each}
+					</Calendar.GridRow>
+				</Calendar.GridHead>
 			</Calendar.Grid>
 		{/each}
 	</Calendar.Months>
 </CalendarPrimitive.Root>
+
+<style>
+	:root {
+		font-size: 1.2rem;
+	}
+</style>

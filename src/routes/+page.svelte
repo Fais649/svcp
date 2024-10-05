@@ -2,65 +2,277 @@
 	import { Footer } from '$lib/components/ui/card';
 	import DatePicker from '$lib/components/ui/DatePicker.svelte';
 	import TextAreaWLabel from '$lib/components/ui/TextAreaWLabel.svelte';
+	import TodoList from '$lib/components/ui/TodoList.svelte';
+	import '@capacitor-community/safe-area';
+	import { Keyboard } from '@capacitor/keyboard';
+	import { Device } from '@capacitor/device';
+	import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+	import { onMount, onDestroy, tick } from 'svelte';
 
-	let todo: HTMLElement;
-	let body: HTMLElement;
+	let bg = '#000';
+	let fg = '#fff';
 
-	function handleFocusIn(event: FocusEvent) {
+	let os = '';
+
+	let keyboardHeight = 0;
+	let viewportHeightPx: number = -1;
+
+	let defaultBoxHeightLg: number = 300;
+	let defaultBoxHeightSm: number = 220;
+
+	let defaultBoxWidthLg: number = 300;
+	let defaultBoxWidthSm: number = 220;
+
+	let defaultHeaderHeightLg: string = `25px`;
+	let defaultHeaderHeightSm: string = `15px`;
+	let defaultHeaderFontSizeLg: string = `16px`;
+	let defaultHeaderFontSizeSm: string = `12px`;
+
+	let boxHeight = defaultBoxHeightLg;
+	$: boxHeightStr = `${boxHeight}px`;
+
+	let boxWidth = defaultBoxWidthLg;
+	$: boxWidthStr = `${boxWidth}px`;
+
+	let headerHeight: string;
+	let headerFontSize: string;
+
+	let fontSize: number = 14;
+
+	let smolPhone: boolean = false;
+	let bigPhone: boolean = true;
+
+	$: boxStyle = 'min-height: {boxHeightStr};';
+
+	$: footerStyle =
+		os === 'ios'
+			? `transition: transform 0.4s ease; transform: translateY(-${keyboardHeight}px)`
+			: '';
+
+	$: footerClass =
+		"fixed bottom-0 z-30 flex h-8 w-full items-center justify-center ${os !== 'ios' ? (bigPhone ? `bottom-2 mb-8` : 'bottom-2 mb-4') : `pb-0`}";
+
+	$: if (viewportHeightPx > 650) {
+		boxHeight = defaultBoxHeightLg;
+		headerHeight = defaultHeaderHeightLg;
+		headerFontSize = defaultHeaderFontSizeLg;
+
+		if (os === 'ios') {
+			boxHeight += 20;
+		}
+		bigPhone = true;
+		smolPhone = false;
+	} else {
+		boxHeight = defaultBoxHeightSm;
+		headerHeight = defaultHeaderHeightSm;
+		headerFontSize = defaultHeaderFontSizeSm;
+
+		if (os === 'ios') {
+			boxHeight += 20;
+		}
+		bigPhone = false;
+		smolPhone = true;
+	}
+
+	let isFocused: boolean = false;
+	let contentDiv: HTMLElement;
+	let todoList: TodoList;
+	let todoListParentDiv: HTMLElement;
+
+	const journalDir: string = 'journal';
+	let dateString: string = '';
+	let noteString: string = '';
+
+	onMount(async () => {
+		try {
+			const info = await Device.getInfo();
+			os = info.platform;
+			viewportHeightPx = window.innerHeight;
+		} catch (error) {
+			console.error('Error getting device inf:', error);
+			os = 'dunno';
+		}
+
+		Keyboard.addListener('keyboardWillShow', (info) => {
+			keyboardHeight = info.keyboardHeight;
+		});
+
+		Keyboard.addListener('keyboardWillHide', () => {
+			keyboardHeight = 0;
+		});
+
+		tick();
+		loadContent();
+	});
+
+	onDestroy(() => {
+		Keyboard.removeAllListeners();
+	});
+
+	const writeFile = async (dir: string, name: string, content: string) => {
+		await Filesystem.writeFile({
+			path: journalDir + '/' + dir + '/' + name,
+			data: content,
+			recursive: true,
+			directory: Directory.Documents,
+			encoding: Encoding.UTF8
+		});
+	};
+
+	const readFile = async (dir: string, name: string) => {
+		const contents = await Filesystem.readFile({
+			path: journalDir + '/' + dir + '/' + name,
+			directory: Directory.Documents,
+			encoding: Encoding.UTF8
+		});
+
+		tick();
+		return contents;
+	};
+
+	const saveContent = async () => {
+		let contentString = JSON.stringify({
+			note: noteString,
+			todo: todoList.getTodosAsString()
+		});
+		await writeFile(dateString, 'note.txt', noteString);
+		await writeFile(dateString, 'todo.txt', todoList.getTodosAsString());
+		await writeFile(dateString, 'content.json', contentString);
+		tick();
+	};
+
+	const loadContent = async () => {
+		try {
+			let contentString = await readFile(dateString, 'content.json');
+			let contentJson = JSON.parse(contentString.data.toString());
+			noteString = contentJson.note;
+			todoList.loadTodos(contentJson.todo.toString());
+		} catch (error) {
+			noteString = '';
+			todoList.clearTodos();
+		}
+		tick();
+	};
+
+	function handleFocusIn(event: FocusEvent, y: number, scale: number) {
 		let el = event.currentTarget as HTMLElement;
-		el.style.transform = 'translateY(-200px) scale(1.1)';
-		el.style.width = getComputedStyle(body).width;
-		el.style.position = 'fixed';
+		animateFocusIn(el, y, scale, 20);
 	}
 
 	function handleFocusOut(event: FocusEvent) {
 		let el = event.currentTarget as HTMLElement;
-		el.style.transform = 'translateY(0) scale(1)';
+		animateFocusOut(el, 0, 1, 2);
+		saveContent();
+	}
+
+	function animateFocusIn(el: HTMLElement, y: number, scale: number, z: number) {
+		el.style.transform = `translateY(${y}px) scale(${scale})`;
+		el.style.zIndex = z.toString();
+		el.style.width = '300px';
+		el.style.position = 'fixed';
+	}
+
+	function animateFocusOut(el: HTMLElement, y: number, scale: number, z: number) {
+		el.style.transform = `translateY(${y}px) scale(${scale})`;
 		el.style.position = 'relative';
+		el.style.zIndex = z.toString();
+	}
+
+	let previousDateString = '';
+
+	$: if (dateString && dateString !== previousDateString) {
+		loadContent();
+		previousDateString = dateString;
 	}
 </script>
 
-<div class="container h-[100vh]">
-	<div class="h-[90vh] w-4/5" bind:this={body}>
-		<div class="h-[20px]" />
-		<div class="h-[200px]">
+<div class="container fixed w-full">
+	<div tabindex="-1" style="width: {boxWidthStr};" bind:this={contentDiv}>
+		<div id="logo" class="text-5xl">⠋</div>
+		<div style="min-height: {boxHeightStr}; margin-left: 0;">
 			<div
-				class="textarea-wrapper"
-				on:focusin={handleFocusIn}
-				on:focusout={handleFocusOut}
-				style=" transition: transform 0.3s ease; transform-origin: top; transform: translateY(0) scale(1);"
+				bind:this={todoListParentDiv}
+				tabindex="-1"
+				class="todo-wrapper"
+				on:pointerup={saveContent}
+				on:touchend={saveContent}
+				on:touchcancel={saveContent}
+				on:focusin={(e) => {
+					isFocused = true;
+					handleFocusIn(e, 0, 1.2);
+					let textbox = document.querySelector('.textarea-wrapper');
+					tick();
+					if (textbox instanceof HTMLElement) {
+						animateFocusIn(textbox, -boxHeight * 1.05, 1.05, 10);
+					}
+				}}
+				on:blur={(e) => {
+					isFocused = false;
+					handleFocusOut(e);
+					let textbox = document.querySelector('.textarea-wrapper');
+					tick();
+					if (textbox instanceof HTMLElement) {
+						animateFocusOut(textbox, 0, 1, 1);
+					}
+				}}
+				style="background: {bg}; color: {fg}; transition: transform 0.4s ease; transform-origin: top; transform: translateY(0) scale(1);"
 			>
-				<TextAreaWLabel height="200px" bg="black" label="todo;" />
+				<TodoList
+					{fontSize}
+					{headerHeight}
+					{headerFontSize}
+					{isFocused}
+					parentDiv={todoListParentDiv}
+					boxHeight={boxHeightStr}
+					bind:this={todoList}
+					label="todo;"
+				/>
 			</div>
 		</div>
 
-		<div class="h-[20px]" />
+		<div style="height: {smolPhone ? `15px` : `20px`}" />
 
-		<div class="min-h-[20px]">
+		<div style={boxStyle}>
 			<div
 				class="textarea-wrapper"
-				on:focusin={handleFocusIn}
-				on:focusout={handleFocusOut}
-				style=" transition: transform 0.3s ease; transform-origin: top; transform: translateY(0) scale(1);"
+				on:focusin={(e) => {
+					isFocused = true;
+					handleFocusIn(e, -boxHeight * 1.1, 1.2);
+				}}
+				on:focusout={(e) => {
+					isFocused = false;
+					handleFocusOut(e);
+				}}
+				style="background: {bg}; color: {fg}; transition: transform 0.4s ease; transform-origin: top; transform: translateY(0) scale(1);"
 			>
-				<TextAreaWLabel height="200px" bg="transparent" label="note;" />
+				<TextAreaWLabel
+					{fontSize}
+					{headerHeight}
+					{headerFontSize}
+					{isFocused}
+					height={boxHeightStr}
+					label="note;"
+					bind:noteString
+				/>
 			</div>
 		</div>
 	</div>
-	<Footer>
-		<DatePicker />
+
+	<Footer style={footerStyle} class={footerClass}>
+		<div style="color: {fg}; background: {bg};">
+			<DatePicker bind:dateString />
+		</div>
 	</Footer>
 </div>
 
 <style>
 	.container {
 		margin: 0;
-		padding-top: 20px;
+		padding-top: var(--safe-area-inset-top);
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
 		align-items: center;
 		text-align: center;
-		position: fixed;
 	}
 </style>
