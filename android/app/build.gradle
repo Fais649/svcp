@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "punk.sys.svcp.app"
+    namespace "com.wispr.app"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "punk.sys.svcp.app"
+        applicationId "com.wispr.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

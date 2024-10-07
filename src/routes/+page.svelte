@@ -39,7 +39,8 @@
 	let todoList: TodoList;
 	let todoListParentDiv: HTMLElement;
 
-	const journalDir: string = 'journal/';
+	$: journalDir = os === 'ios' ? 'journal/' : 'wisp_r/journal/';
+	$: rootDir = os === 'ios' ? '' : 'wisp_r';
 	let dateString: string = '';
 	let noteString: string = '';
 
@@ -79,7 +80,9 @@
 			: '';
 
 	$: footerClass =
-		"fixed  bottom-0 z-[120] flex h-10 w-full items-center justify-center ${os !== 'ios' ? (bigPhone ? `bottom-2 mb-8` : 'bottom-2 mb-4') : `pb-0`}";
+		os === 'ios'
+			? 'fixed z-[120] flex h-10 w-full items-center justify-center pb-0 bottom-2'
+			: 'fixed z-[120] flex h-10 w-full items-center justify-center pb-0 bottom-8';
 
 	$: if (viewportHeightPx > 650) {
 		boxHeight = defaultBoxHeightLg;
@@ -88,6 +91,8 @@
 
 		if (os === 'ios') {
 			boxHeight += 20;
+		} else {
+			boxHeight += 40;
 		}
 		bigPhone = true;
 		smolPhone = false;
@@ -107,6 +112,7 @@
 		try {
 			const info = await Device.getInfo();
 			os = info.platform;
+			console.log(os);
 			viewportHeightPx = window.innerHeight;
 		} catch (error) {
 			console.error('Error getting device inf:', error);
@@ -162,15 +168,19 @@
 			note: noteString,
 			todo: todoList.getTodosAsString()
 		});
-		await writeFile(journalDir + dateString, 'note.txt', noteString);
-		await writeFile(journalDir + dateString, 'todo.txt', todoList.getTodosAsS255ring());
-		await writeFile(journalDir + dateString, 'content.json', contentString);
+		try {
+			await writeFile(journalDir + dateString, 'note.txt', noteString);
+			await writeFile(journalDir + dateString, 'todo.txt', todoList.getTodosAsString());
+			await writeFile(journalDir + dateString, 'content.json', contentString);
+		} catch (error) {
+			console.error('WTF: ', error);
+		}
 		tick();
 	};
 
 	const savePreferences = async () => {
 		try {
-			await writeFile('', 'preferences.json', JSON.stringify(preferences));
+			await writeFile(rootDir, 'preferences.json', JSON.stringify(preferences));
 			console.log(await readFile('', 'preferences.json'));
 		} catch (error) {
 			console.log(error);
@@ -180,7 +190,7 @@
 
 	const loadPreferences = async () => {
 		try {
-			let preferencesString = await readFile('', 'preferences.json');
+			let preferencesString = await readFile(rootDir, 'preferences.json');
 			let preferencesJson = JSON.parse(preferencesString);
 			if (preferencesJson.theme) {
 				updateCSSVariables(preferencesJson.theme);
@@ -276,7 +286,7 @@
 					parentDiv={todoListParentDiv}
 					boxHeight={boxHeightStr}
 					bind:this={todoList}
-					label="todo;"
+					label="lol;"
 				/>
 			</div>
 		</div>

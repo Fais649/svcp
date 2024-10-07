@@ -6,6 +6,10 @@ export const themes = [
 	'tokyonight',
 	'rosepine',
 	'rosepine_light',
+	'pink_light',
+	'pink_dark',
+	'cyberpunk_light',
+	'cyberpunk_dark',
 ];
 
 export const r = document.documentElement;
@@ -56,10 +60,10 @@ export function updateCSSVariables(mode) {
 			'--card': '240 10% 3.9%',
 			'--card-foreground': '0 0% 98%',
 
-			'--border': '#000000',
+			'--border': '0 0% 100%',
 			'--input': '0 0 0',
 
-			'--primary': '#ffffff',
+			'--primary': '0 0% 98%',
 			'--primary-foreground': '240 5.9% 10%',
 
 			'--secondary': '240 3.7% 15.9%',
@@ -202,6 +206,198 @@ export function updateCSSVariables(mode) {
 			'--ring': '250 45% 55%', // Soft blue ring color for focused elements (#56949f)
 
 			'--radius': '0.5rem' // Keep border radius unchanged
+		},
+		pink_light: {
+			'--background': '#eeeeee', // White background
+			'--foreground': '#d15466', // Light pink foreground
+
+			'--muted': '330 50% 90%', // Light pink muted
+			'--muted-foreground': '330 30% 50%', // Darker muted pink
+
+			'--popover': '0 0% 93%', // Slightly darker pink for popovers
+			'--popover-foreground': '351 58% 57%', // Black text on popover
+
+			'--card': '330 50% 85%', // Card background
+			'--card-foreground': '#000000', // Black text on card
+
+			'--border': '#cccccc', // Light gray border
+			'--input': '330 50% 90%', // Input background
+
+			'--primary': '300 40% 50%', // Pastel purple
+			'--primary-foreground': '0 0% 100%', // White text on primary
+
+			'--secondary': '210 70% 60%', // Pastel blue
+			'--secondary-foreground': '#ffffff', // White text on secondary
+
+			'--accent': '60 70% 80%', // Pastel yellow
+			'--accent-foreground': '#000000', // Black text on accent
+
+			'--destructive': '0 70% 50%', // Pastel red
+			'--destructive-foreground': '#ffffff', // White text on destructive
+
+			'--ring': '60 70% 70%', // Pastel yellow ring
+
+			'--radius': '0.5rem' // Border radius
+		},
+		pink_dark: {
+			'--background': '#5e1a40', // Dark background
+			'--foreground': '#ffb6c1', // Light pink foreground
+
+			'--muted': '330 50% 30%', // Muted dark pink
+			'--muted-foreground': '330 30% 60%', // Lighter muted pink
+
+			'--popover': '327 56% 24%', // Popover dark pink
+			'--popover-foreground': '#ffffff', // White text on popover
+
+			'--card': '330 50% 35%', // Card dark background
+			'--card-foreground': '#ffffff', // White text on card
+
+			'--border': '#333333', // Dark gray border
+			'--input': '330 50% 30%', // Input dark background
+
+			'--primary': '326 72% 89%', // Pastel yellow
+			'--primary-foreground': '327 56% 24%', // Dark text on accent
+
+			'--secondary': '210 70% 60%', // Pastel blue
+			'--secondary-foreground': '#1c1c1c', // Dark text on secondary
+
+			'--accent': '326 57% 28%', // Pastel yellow
+			'--accent-foreground': '326 72% 89%', // Dark text on accent
+
+			'--destructive': '0 70% 50%', // Pastel red
+			'--destructive-foreground': '#ffffff', // White text on destructive
+
+			'--ring': '60 70% 60%', // Pastel yellow ring
+
+			'--radius': '0.5rem' // Border radius
+		},
+		babyblue_light: {
+			'--background': '#e0f7fa', // Baby blue background
+			'--foreground': '#006064', // Dark teal foreground
+
+			'--muted': '190 30% 90%', // Light baby blue muted
+			'--muted-foreground': '190 20% 50%', // Darker muted blue
+
+			'--popover': '190 30% 80%', // Slightly darker blue for popovers
+			'--popover-foreground': '#000000', // Black text on popover
+
+			'--card': '190 30% 85%', // Card background
+			'--card-foreground': '#000000', // Black text on card
+
+			'--border': '#b2ebf2', // Light blue border
+			'--input': '190 30% 90%', // Input background
+
+			'--primary': '220 70% 50%', // Pastel navy
+			'--primary-foreground': '#ffffff', // White text on primary
+
+			'--secondary': '160 70% 60%', // Pastel green
+			'--secondary-foreground': '#ffffff', // White text on secondary
+
+			'--accent': '50 70% 80%', // Pastel yellow
+			'--accent-foreground': '#000000', // Black text on accent
+
+			'--destructive': '0 70% 50%', // Pastel red
+			'--destructive-foreground': '#ffffff', // White text on destructive
+
+			'--ring': '50 70% 70%', // Pastel yellow ring
+
+			'--radius': '0.5rem' // Border radius
+		},
+		babyblue_dark: {
+			'--background': '#004d40', // Dark teal background
+			'--foreground': '#80deea', // Light baby blue foreground
+
+			'--muted': '190 30% 30%', // Muted dark blue
+			'--muted-foreground': '190 20% 60%', // Lighter muted blue
+
+			'--popover': '190 30% 40%', // Popover dark blue
+			'--popover-foreground': '#ffffff', // White text on popover
+
+			'--card': '190 30% 35%', // Card dark background
+			'--card-foreground': '#ffffff', // White text on card
+
+			'--border': '#004d40', // Dark teal border
+			'--input': '190 30% 30%', // Input dark background
+
+			'--primary': '220 70% 60%', // Pastel navy
+			'--primary-foreground': '#004d40', // Dark text on primary
+
+			'--secondary': '160 70% 60%', // Pastel green
+			'--secondary-foreground': '#004d40', // Dark text on secondary
+
+			'--accent': '50 70% 70%', // Pastel yellow
+			'--accent-foreground': '#004d40', // Dark text on accent
+
+			'--destructive': '0 70% 50%', // Pastel red
+			'--destructive-foreground': '#ffffff', // White text on destructive
+
+			'--ring': '50 70% 60%', // Pastel yellow ring
+
+			'--radius': '0.5rem' // Border radius
+		},
+		cyberpunk_light: {
+			'--background': '#cc0000', // Black background
+			'--foreground': '#000000', // Bright red foreground
+
+			'--muted': '0 100% 20%', // Dark red muted
+			'--muted-foreground': '0 0% 0%', // Light red muted
+
+			'--popover': '0 100% 40%', // Darker red for popovers
+			'--popover-foreground': '#ffffff', // White text on popover
+
+			'--card': '0 100% 25%', // Card dark red background
+			'--card-foreground': '#ffffff', // White text on card
+
+			'--border': '0 0% 0%', // Dark gray border
+			'--input': '0 100% 20%', // Input dark red background
+
+			'--primary': '0 0% 0%', // Orange-red
+			'--primary-foreground': '0 100% 60%', // Black text on primary
+
+			'--secondary': '#dc143c', // Crimson
+			'--secondary-foreground': '#000000', // Black text on secondary
+
+			'--accent': '16 100% 50%', // Deep pink
+			'--accent-foreground': '#000000', // Black text on accent
+
+			'--destructive': '#b22222', // Firebrick
+			'--destructive-foreground': '#ffffff', // White text on destructive
+
+			'--ring': '#ff0000', // Bright red ring
+
+			'--radius': '0.5rem' // Border radius
+		},
+		cyberpunk_dark: {
+			'--background': '#000000', // Very dark gray background
+			'--foreground': '#cc0000', // Lighter bright red foreground
+
+			'--muted': '0 100% 15%', // Very dark red muted
+			'--muted-foreground': '0 100% 55%', // Light red muted
+
+			'--popover': '0 0% 0%', // Darker red for popovers
+			'--popover-foreground': '#ffffff', // White text on popover
+
+			'--card': '0 100% 20%', // Card very dark red background
+			'--card-foreground': '#ffffff', // White text on card
+
+			'--border': '#4d4d4d', // Medium dark gray border
+			'--input': '0 100% 15%', // Input very dark red background
+
+			'--primary': '0 100% 50%', // Tomato
+			'--primary-foreground': '0 0% 0%', // Dark text on primary
+
+			'--secondary': '#e75480', // Hot pink
+			'--secondary-foreground': '#1a1a1a', // Dark text on secondary
+
+			'--accent': '0 90% 30%', // Hot pink
+			'--accent-foreground': '0 0% 0%', // Dark text on accent
+
+			'--destructive': '#cd5c5c', // Indian red
+			'--destructive-foreground': '#ffffff', // White text on destructive
+
+			'--ring': '#ff4d4d', // Bright red ring
+
+			'--radius': '0.5rem' // Border radius
 		}
 	};
 

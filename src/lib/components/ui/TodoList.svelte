@@ -137,7 +137,7 @@
 			>
 				<div
 					style="font-size: 15px;"
-					class="w-1/6 items-center justify-self-center text-center align-middle"
+					class="w-[30px] items-center justify-self-center text-center align-middle"
 					on:pointerdown={(e) => {
 						e.preventDefault();
 						toggleCompleteTodoItem(index);

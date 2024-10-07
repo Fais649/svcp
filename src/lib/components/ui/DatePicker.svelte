@@ -86,9 +86,7 @@
 				{dayOfWeek + ' : ' + dateString}
 			</Button>
 		</Popover.Trigger>
-		<Popover.Content
-			class="flex aspect-square flex-col overflow-clip rounded-xl border-[1px] border-dotted p-0"
-		>
+		<Popover.Content class="flex flex-col overflow-clip rounded-xl border-[1px] border-dotted p-0">
 			<div class="w-full rounded-md border-0">
 				<Calendar class="w-full border-0" bind:value />
 				<div class="flex w-full flex-row">

@@ -20,16 +20,17 @@ const config: CapacitorConfig = {
 			offset: 0,
 		},
 	},
-	server: {
-		// for android only, below settings will work out of the box
-		// for iOS or both, change the url to http://your-device-ip
-		// To discover your workstation IP, just run ifconfig
-		//"url": "http://192.168.1.248:5174",
-		"url": "http://192.168.1.235:5173",
-		//"url": "http://10.0.209.245:5173",
-		//"url": "http://10.0.113.110:5173",
-		"cleartext": true
-	}
+	//server: {
+	//	// for android only, below settings will work out of the box
+	//	// for iOS or both, change the url to http://your-device-ip
+	//	// To discover your workstation IP, just run ifconfig
+	//	//"url": "http://192.168.1.248:5174",
+	//	//"url": "http://192.168.1.235:5173",
+	//	"url": "http://192.168.178.91:5173",
+	//	//"url": "http://10.0.209.245:5173",
+	//	//"url": "http://10.0.113.110:5173",
+	//	"cleartext": true
+	//}
 };
 
 export default config;
