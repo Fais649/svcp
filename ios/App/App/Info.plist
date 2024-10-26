@@ -49,5 +49,7 @@
 	<string></string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+    <string>$(PRODUCT_NAME) user your calendar.</string>
 </dict>
 </plist>
